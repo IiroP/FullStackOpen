@@ -31,11 +31,29 @@ const Person = ({person, deletePerson}) => {
   )
 }
 
+const Notification = ({status, error}) => {
+  if (error !== '') {
+    return (
+      <div className='error message'>
+        {error}
+      </div>
+    )
+  } else if (status !== '') {
+    return (
+      <div className='message'>
+        {status}
+      </div>
+    )
+  }
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [status, setStatus] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     personService.getAll().then(response => setPersons(response))
@@ -50,20 +68,43 @@ const App = () => {
 
     const existingIndex = persons.findIndex(person => person.name === newName)
     if (existingIndex === -1) {
-      personService.addPerson(personObject).then(response => {
-        setPersons(persons.concat(response))
-        setNewName("")
-        setNewNumber("")
-    })
+      personService
+        .addPerson(personObject)
+        .then(response => {
+          setPersons(persons.concat(response))
+          setNewName("")
+          setNewNumber("")
+          // Status message:
+          setStatus(`${personObject.name} added succesfully`)
+          setTimeout(() => {
+            setStatus("")
+          }, 5000)
+        })
+      
     } else {
       const confirmed = window.confirm(`${newName} is already added to phonebook, replace number?`)
       if (confirmed) {
         const id = persons[existingIndex].id
-        personService.updatePerson({id, personObject}).then(response => {
-          setPersons(persons.map(person => person.id !== id ? person : response))
-          setNewName("")
-          setNewNumber("")
-        })
+        personService
+          .updatePerson({id, personObject})
+          .then(response => {
+            console.log(response)
+            setPersons(persons.map(person => person.id !== id ? person : response))
+            setNewName("")
+            setNewNumber("")
+            // Status message:
+            setStatus(`${personObject.name} updated succesfully`)
+            setTimeout(() => {
+              setStatus("")
+            }, 5000)
+          })
+          .catch(error => {
+            setError(`Person "${personObject.name}" was already removed from the server`)
+            setPersons(persons.filter(person => person.id !== id))
+            setTimeout(() => {
+              setError("")
+            }, 5000)
+          })
       }
     }
   }
@@ -72,8 +113,19 @@ const App = () => {
     const name = persons.find(person => person.id === id).name
     const confirmed = window.confirm(`Do you want to remove ${name}?`)
     if (confirmed) {
-      personService.deletePerson(id)
-      setPersons(persons.filter(person => person.id != id))
+      personService
+        .deletePerson(id)
+        .then(response => {
+          setPersons(persons.filter(person => person.id !== id))
+          setStatus(`${name} removed succesfully`)
+          setTimeout(() => {
+            setStatus("")
+          }, 5000)
+        })
+        .catch(error => {
+          setError(error)
+        })
+      
     }
   }
 
@@ -96,6 +148,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification status={status} error={error} />
       <Filter action={handleFilterChange} />
       <h2>Add new contact</h2>
       <PersonForm 
