@@ -11,7 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [filter, setFilter] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [notificationMsg, setNotificationMsg] = useState("test")
+  const [notificationMsg, setNotificationMsg] = useState(null)
   const [error, setError] = useState(false)
 
   // Load initial data from server
