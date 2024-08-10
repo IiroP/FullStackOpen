@@ -41,17 +41,7 @@ const App = () => {
     // Person exists
     if (persons.map(person => person.name).includes(newName)) {
       if (window.confirm(`${newName} is already added, do you want to update the number?`)) {
-        const person = persons.find(p => p.name === newName)
-        personService
-          .update(person.id, { ...person, number: newNumber })
-          .then(response => {
-            setPersons(persons.map(p => p.id !== person.id ? p : response.data))
-            displayNotification(`Updated ${person.name}`)
-          })
-          .catch(() => {
-            displayNotification(`Information of ${person.name} has already been removed from the server`, true)
-            setPersons(persons.filter(p => p.id !== person.id))
-          })
+        updatePerson()
       }
       return
     }
@@ -59,11 +49,29 @@ const App = () => {
     const person = { name: newName, number: newNumber }
     personService
       .create(person)
-      .then(() => {
-        setPersons(persons.concat(person))
+      .then(response => {
+        setPersons(persons.concat(response.data))
         displayNotification(`Added ${person.name}`)
       })
+      .catch(error => {
+        console.error(error.response.data.error)
+        displayNotification(error.response.data.error, true)
+      })
 
+  }
+
+  const updatePerson = () => {
+    const person = persons.find(p => p.name === newName)
+    personService
+      .update(person.id, { ...person, number: newNumber })
+      .then(response => {
+        setPersons(persons.map(p => p.id !== person.id ? p : response.data))
+        displayNotification(`Updated ${person.name}`)
+      })
+      .catch(error => {
+        console.error(error.response.data.error)
+        displayNotification(error.response.data.error, true)
+      })
   }
 
   const removePerson = (person) => {
