@@ -13,3 +13,20 @@ content-type: application/json
 	"url": "https://google.com",
 	"likes": 10
 }
+
+###
+
+# Post invalid blog
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+content-type: application/json
+
+{
+	"author": "Someone",
+	"url": "https://google.com",
+	"likes": 10
+}
+
+###
+
+# Delete invalid id
+DELETE http://localhost:3003/api/blogs/notARealID
