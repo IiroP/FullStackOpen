@@ -58,6 +58,7 @@ GET http://localhost:3003/api/blogs/
 # Post new blog
 POST http://localhost:3003/api/blogs/ HTTP/1.1
 content-type: application/json
+Authorization: Bearer token
 
 {
 	"title": "Something",
@@ -70,3 +71,25 @@ content-type: application/json
 
 ## Delete blog
 DELETE http://localhost:3003/api/blogs/68a2f4cf97c00633c66bfe0a HTTP/1.1
+
+
+###
+
+# Invalid login
+POST http://localhost:3003/api/login HTTP/1.1
+content-type: application/json
+
+{
+	"username": "Non-existent",
+	"password": "123"
+}
+
+###
+# Valid login
+POST http://localhost:3003/api/login HTTP/1.1
+content-type: application/json
+
+{
+	"username": "Testiuser",
+	"password": "abc123"
+}
