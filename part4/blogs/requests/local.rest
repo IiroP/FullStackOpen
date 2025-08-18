@@ -95,3 +95,16 @@ content-type: application/json
 	"username": "Testiuser",
 	"password": "abc123"
 }
+
+###
+
+# Update blog
+PUT http://localhost:3003/api/blogs/68a3096f730b1ee1846ade92 HTTP/1.1
+content-type: application/json
+
+{
+	"title": "Updated Title",
+	"author": "Updated Author",
+	"url": "https://updated-url.com",
+	"likes": 20
+}

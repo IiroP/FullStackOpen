@@ -31,8 +31,13 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 	response.status(204).end()
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
+	const user = request.user
 	const id = request.params.id
+	const blog = await Blog.findById(id)
+	if (!blog) {
+		return response.status(404).json({ error: 'blog not found' })
+	}
 	const updated = await Blog.findByIdAndUpdate(id, request.body, { new: true })
 	response.json(updated)
 })
