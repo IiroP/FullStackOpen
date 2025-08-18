@@ -1,5 +1,8 @@
+const jwt = require('jsonwebtoken')
 const morgan = require('morgan')
 const logger = require('./logger')
+const User = require('../models/user')
+
 
 morgan.token('body', (req) => {
 	if (req.method === 'POST') {
@@ -29,4 +32,17 @@ const tokenExtractor = (request, response, next) => {
 	next()
 }
 
-module.exports = { errorHandler, requestLogger, tokenExtractor }
+const userExtractor = async (request, response, next) => {
+	const token = jwt.verify(request.token, process.env.SECRET)
+	if (!token.id) {
+		return response.status(401).json({ error: 'invalid token' })
+	}
+	const user = await User.findById(token.id)
+	if (!user) {
+		return response.status(401).json({ error: 'user not found' })
+	}
+	request.user = user
+	next()
+}
+
+module.exports = { errorHandler, requestLogger, tokenExtractor, userExtractor }
