@@ -30,3 +30,20 @@ content-type: application/json
 
 # Delete invalid id
 DELETE http://localhost:3003/api/blogs/notARealID
+
+###
+
+# Post new user
+POST http://localhost:3003/api/users/ HTTP/1.1
+content-type: application/json
+
+{
+	"username": "Testiuser",
+	"name": "Testi Käyttäjä",
+	"password": "abc123"
+}
+
+###
+
+# List all users
+GET http://localhost:3003/api/users/
