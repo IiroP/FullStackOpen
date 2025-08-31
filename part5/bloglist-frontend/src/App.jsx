@@ -47,6 +47,10 @@ const App = () => {
     setBlogs(newBlogs);
   };
 
+  const addLike = async (blog) => {
+    await blogService.like(blog.id);
+  };
+
   useEffect(() => {
     updateBlogs();
   }, []);
@@ -130,6 +134,7 @@ const App = () => {
             blog={blog}
             user={user}
             updateBlogs={updateBlogs}
+            addLike={addLike}
           />
         ))}
     </div>
