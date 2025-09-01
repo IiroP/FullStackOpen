@@ -5,7 +5,8 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test node --test --test-concurrency=1",
     "start": "cross-env NODE_ENV=prod node index.js",
-    "dev": "cross-env NODE_ENV=dev nodemon index.js"
+    "dev": "cross-env NODE_ENV=dev nodemon index.js",
+    "start:test": "cross-env NODE_ENV=test node --watch index.js"
   },
   "author": "Iiro Poutiainen",
   "license": "ISC",

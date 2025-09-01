@@ -47,8 +47,8 @@ const App = () => {
     setBlogs(newBlogs);
   };
 
-  const addLike = async (blog) => {
-    await blogService.like(blog.id);
+  const addLike = async (id) => {
+    await blogService.like(id);
   };
 
   useEffect(() => {
