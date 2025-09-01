@@ -37,8 +37,8 @@ const App = () => {
   };
 
   const createBlog = async (blog) => {
-    const response = await blogService.create(blog);
-    setBlogs(blogs.concat(response));
+    await blogService.create(blog);
+    await updateBlogs();
     blogFormRef.current.toggleVisibility();
   };
 

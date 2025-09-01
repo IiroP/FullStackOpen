@@ -30,7 +30,7 @@ const Blog = ({ blog, user, updateBlogs, addLike }) => {
   };
 
   return (
-    <div style={{ padding: 5 }}>
+    <div style={{ padding: 5 }} className="blog">
       <span>{blog.title}</span> <span>{blog.author}</span>
       <button onClick={() => setOpen(!open)}>{open ? "Hide" : "View"}</button>
       {open && (
