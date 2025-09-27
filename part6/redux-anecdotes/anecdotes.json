@@ -33,6 +33,16 @@
     {
       "id": "10e1",
       "content": "test",
+      "votes": 3
+    },
+    {
+      "id": "7ba3",
+      "content": "",
+      "votes": 0
+    },
+    {
+      "id": "b98e",
+      "content": "123",
       "votes": 0
     }
   ]
