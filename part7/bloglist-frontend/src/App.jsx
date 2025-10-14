@@ -6,17 +6,23 @@ import blogService from "./services/blogs";
 import Togglable from "./components/Togglable";
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs } from "./reducers/blogReducer";
-import { login, logout, setUser } from "./reducers/userReducer";
+import { login, logout, setUser } from "./reducers/loginReducer";
+import { Route, Routes, useMatch } from "react-router-dom";
+import { initializeUsers } from "./reducers/usersReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
   const message = useSelector((state) => state.notification);
   const user = useSelector((state) => state.user);
+  const users = useSelector((state) => state.users);
 
   const blogFormRef = useRef();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const match = useMatch("/users/:id");
+  const userById = match ? users.find((u) => u.id === match.params.id) : null;
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -37,6 +43,7 @@ const App = () => {
 
   useEffect(() => {
     updateBlogs();
+    dispatch(initializeUsers());
   }, []);
 
   useEffect(() => {
@@ -94,6 +101,67 @@ const App = () => {
     );
   }
 
+  const MainPage = () => {
+    return (
+      <>
+        <Togglable buttonLabel="New blog" ref={blogFormRef}>
+          <BlogForm />
+        </Togglable>
+
+        <h3>Current blogs</h3>
+        {blogs
+          .toSorted((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <Blog key={blog.id} blog={blog} user={user} />
+          ))}
+      </>
+    );
+  };
+
+  const Users = () => {
+    return (
+      <>
+        <h2>Users</h2>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Blogs created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td>
+                  <a href={`/users/${user.id}`}>{user.name}</a>
+                </td>
+                <td>{user.blogs.length}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    );
+  };
+
+  const User = ({ user }) => {
+    if (!user) {
+      return null;
+    }
+
+    return (
+      <div>
+        <h2>{user.name}</h2>
+        <h3>Added blogs:</h3>
+        <ul>
+          {user.blogs.map((blog) => (
+            <li key={blog.id}>{blog.title}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <div>
       <h2>blogs</h2>
@@ -103,16 +171,12 @@ const App = () => {
         <button onClick={() => dispatch(logout())}>Logout</button>
       </p>
 
-      <Togglable buttonLabel="New blog" ref={blogFormRef}>
-        <BlogForm />
-      </Togglable>
-
-      <h3>Current blogs</h3>
-      {blogs
-        .toSorted((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog key={blog.id} blog={blog} user={user} />
-        ))}
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/create" element={<MainPage />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<User user={userById} />} />
+      </Routes>
     </div>
   );
 };
