@@ -44,10 +44,6 @@ const App = () => {
     dispatch(initializeBlogs());
   };
 
-  const addLike = async (id) => {
-    await blogService.like(id);
-  };
-
   useEffect(() => {
     updateBlogs();
   }, []);
@@ -123,13 +119,7 @@ const App = () => {
       {blogs
         .toSorted((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            user={user}
-            updateBlogs={updateBlogs}
-            addLike={addLike}
-          />
+          <Blog key={blog.id} blog={blog} user={user} />
         ))}
     </div>
   );

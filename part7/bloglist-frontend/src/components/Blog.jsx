@@ -1,14 +1,14 @@
 import { useState } from "react";
-import blogService from "../services/blogs";
+import { useDispatch } from "react-redux";
+import { removeBlog, likeBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, user, updateBlogs, addLike }) => {
+const Blog = ({ blog, user }) => {
   const [open, setOpen] = useState(false);
-  const [likes, setLikes] = useState(blog.likes);
+  const dispatch = useDispatch();
 
   const handleLike = async () => {
     try {
-      await addLike(blog.id);
-      setLikes(likes + 1);
+      dispatch(likeBlog(blog.id));
     } catch (error) {
       console.error("Error liking blog:", error);
     }
@@ -21,8 +21,7 @@ const Blog = ({ blog, user, updateBlogs, addLike }) => {
       )
     ) {
       try {
-        await blogService.remove(blog.id);
-        updateBlogs();
+        dispatch(removeBlog(blog.id));
       } catch (error) {
         console.error("Failed to remove blog:", error);
       }
@@ -37,7 +36,7 @@ const Blog = ({ blog, user, updateBlogs, addLike }) => {
         <div>
           <span>{blog.url}</span>
           <br />
-          <span>Likes: {likes}</span>
+          <span>Likes: {blog.likes}</span>
           <button onClick={handleLike}>Like</button>
           <br />
           <span>Added by {blog.user.name}</span>
