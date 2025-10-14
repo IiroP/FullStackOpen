@@ -1,48 +1,49 @@
-const jwt = require('jsonwebtoken')
-const morgan = require('morgan')
-const logger = require('./logger')
-const User = require('../models/user')
+const jwt = require("jsonwebtoken");
+const morgan = require("morgan");
+const logger = require("./logger");
+const User = require("../models/user");
 
+morgan.token("body", (req) => {
+  if (req.method === "POST") {
+    return JSON.stringify(req.body);
+  }
+});
 
-morgan.token('body', (req) => {
-	if (req.method === 'POST') {
-		return JSON.stringify(req.body)
-	}
-})
-
-const requestLogger = morgan(':method :url :status :res[content-length] - :response-time ms :body')
+const requestLogger = morgan(
+  ":method :url :status :res[content-length] - :response-time ms :body"
+);
 
 const errorHandler = (error, req, res, next) => {
-	logger.error(error.message)
-	if (error.name === 'CastError') {
-		return res.status(400).json({ error: 'Malformatted id' })
-	} else if (error.name === 'ValidationError') {
-		return res.status(400).json({ error })
-	} else if (error.name === 'JsonWebTokenError') {
-		return res.status(401).json({ error: 'token missing or invalid' })
-	}
-	next(error)
-}
+  logger.error(error.message);
+  if (error.name === "CastError") {
+    return res.status(400).json({ error: "Malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error });
+  } else if (error.name === "JsonWebTokenError") {
+    return res.status(401).json({ error: "token missing or invalid" });
+  }
+  next(error);
+};
 
 const tokenExtractor = (request, response, next) => {
-	const authorization = request.get('authorization')
-	if (authorization && authorization.startsWith('Bearer ')) {
-		request.token = authorization.replace('Bearer ', '')
-	}
-	next()
-}
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
+  }
+  next();
+};
 
 const userExtractor = async (request, response, next) => {
-	const token = jwt.verify(request.token, process.env.SECRET)
-	if (!token.id) {
-		return response.status(401).json({ error: 'invalid token' })
-	}
-	const user = await User.findById(token.id)
-	if (!user) {
-		return response.status(401).json({ error: 'user not found' })
-	}
-	request.user = user
-	next()
-}
+  const token = jwt.verify(request.token, process.env.SECRET);
+  if (!token.id) {
+    return response.status(401).json({ error: "invalid token" });
+  }
+  const user = await User.findById(token.id);
+  if (!user) {
+    return response.status(401).json({ error: "user not found" });
+  }
+  request.user = user;
+  next();
+};
 
-module.exports = { errorHandler, requestLogger, tokenExtractor, userExtractor }
+module.exports = { errorHandler, requestLogger, tokenExtractor, userExtractor };
