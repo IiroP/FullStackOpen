@@ -1,0 +1,110 @@
+# Get all blogs
+GET http://localhost:3003/api/blogs
+
+###
+
+# Post new blog
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+content-type: application/json
+
+{
+	"title": "Something",
+	"author": "Someone",
+	"url": "https://google.com",
+	"likes": 10
+}
+
+###
+
+# Post invalid blog
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+content-type: application/json
+
+{
+	"author": "Someone",
+	"url": "https://google.com",
+	"likes": 10
+}
+
+###
+
+# Delete invalid id
+DELETE http://localhost:3003/api/blogs/notARealID
+
+###
+
+# Post new user
+POST http://localhost:3003/api/users/ HTTP/1.1
+content-type: application/json
+
+{
+	"username": "Testiuser",
+	"name": "Testi Käyttäjä",
+	"password": "abc123"
+}
+
+###
+
+# List all users
+GET http://localhost:3003/api/users/
+
+###
+
+# List all blogs
+GET http://localhost:3003/api/blogs/
+
+###
+
+# Post new blog
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RpdXNlciIsImlkIjoiNjhhMmY5ZGExMzg2NDRkOGE1YWU5MTFkIiwiaWF0IjoxNzU1NTEzODE5fQ.3xvl6bJFKmJaxEg9_w9pE8jtn6iHfsYl3KeytxrR6p8
+
+{
+	"title": "Something",
+	"author": "Someone",
+	"url": "https://google.com",
+	"likes": 10
+}
+
+###
+
+## Delete blog
+DELETE http://localhost:3003/api/blogs/68a3049f996d0c66010fcda8 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RpdXNlciIsImlkIjoiNjhhMmY5ZGExMzg2NDRkOGE1YWU5MTFkIiwiaWF0IjoxNzU1NTEzODE5fQ.3xvl6bJFKmJaxEg9_w9pE8jtn6iHfsYl3KeytxrR6p8
+
+
+
+###
+
+# Invalid login
+POST http://localhost:3003/api/login HTTP/1.1
+content-type: application/json
+
+{
+	"username": "Non-existent",
+	"password": "123"
+}
+
+###
+# Valid login
+POST http://localhost:3003/api/login HTTP/1.1
+content-type: application/json
+
+{
+	"username": "Testiuser",
+	"password": "abc123"
+}
+
+###
+
+# Update blog
+PUT http://localhost:3003/api/blogs/68a3096f730b1ee1846ade92 HTTP/1.1
+content-type: application/json
+
+{
+	"title": "Updated Title",
+	"author": "Updated Author",
+	"url": "https://updated-url.com",
+	"likes": 20
+}
