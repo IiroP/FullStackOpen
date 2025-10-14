@@ -1,16 +1,19 @@
 import { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import login from "./services/login";
 import Togglable from "./components/Togglable";
+import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState({});
+  const dispatch = useDispatch();
+  const message = useSelector((state) => state.notification);
 
   const blogFormRef = useRef();
 
@@ -65,10 +68,7 @@ const App = () => {
   }, []);
 
   const showMessage = (type, content) => {
-    setMessage({ type, content });
-    setTimeout(() => {
-      setMessage({});
-    }, 5000);
+    dispatch(setNotification(type, content));
   };
 
   const msgBox = () => {
