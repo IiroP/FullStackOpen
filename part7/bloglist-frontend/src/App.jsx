@@ -6,16 +6,17 @@ import blogService from "./services/blogs";
 import login from "./services/login";
 import Togglable from "./components/Togglable";
 import { setNotification } from "./reducers/notificationReducer";
+import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs);
   const message = useSelector((state) => state.notification);
 
   const blogFormRef = useRef();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState(null);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -39,15 +40,8 @@ const App = () => {
     setUser(null);
   };
 
-  const createBlog = async (blog) => {
-    await blogService.create(blog);
-    await updateBlogs();
-    blogFormRef.current.toggleVisibility();
-  };
-
   const updateBlogs = async () => {
-    const newBlogs = await blogService.getAll();
-    setBlogs(newBlogs);
+    dispatch(initializeBlogs());
   };
 
   const addLike = async (id) => {
@@ -122,12 +116,12 @@ const App = () => {
       </p>
 
       <Togglable buttonLabel="New blog" ref={blogFormRef}>
-        <BlogForm createBlog={createBlog} showMessage={showMessage} />
+        <BlogForm />
       </Togglable>
 
       <h3>Current blogs</h3>
       {blogs
-        .sort((a, b) => b.likes - a.likes)
+        .toSorted((a, b) => b.likes - a.likes)
         .map((blog) => (
           <Blog
             key={blog.id}

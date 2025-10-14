@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { createBlog } from "../reducers/blogReducer";
+import { setNotification } from "../reducers/notificationReducer";
 
-const BlogForm = ({ createBlog, showMessage }) => {
+const BlogForm = () => {
   const [blogTitle, setBlogTitle] = useState("");
   const [blogAuthor, setBlogAuthor] = useState("");
   const [blogUrl, setBlogUrl] = useState("");
+  const dispatch = useDispatch();
 
   const handleCreateBlog = async (event) => {
     event.preventDefault();
@@ -14,17 +18,21 @@ const BlogForm = ({ createBlog, showMessage }) => {
         author: blogAuthor,
         url: blogUrl,
       };
-      await createBlog(newBlog);
+      dispatch(createBlog(newBlog));
       setBlogTitle("");
       setBlogAuthor("");
       setBlogUrl("");
-      showMessage(
-        "success",
-        `A new blog "${newBlog.title}" by ${newBlog.author} added`
+      dispatch(
+        setNotification(
+          "success",
+          `A new blog "${newBlog.title}" by ${newBlog.author} added`
+        )
       );
     } catch (exception) {
       console.error(exception);
-      showMessage("error", "Blog creation failed, check the input");
+      dispatch(
+        setNotification("error", "Blog creation failed, check the input")
+      );
     }
   };
 
