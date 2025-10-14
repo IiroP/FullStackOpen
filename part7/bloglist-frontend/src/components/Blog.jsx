@@ -1,6 +1,11 @@
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { removeBlog, likeBlog, commentBlog } from "../reducers/blogReducer";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
 
 const Blog = ({ blog, user }) => {
   const dispatch = useDispatch();
@@ -47,29 +52,41 @@ const Blog = ({ blog, user }) => {
         <span>{blog.url}</span>
         <br />
         <span>Likes: {blog.likes}</span>
-        <button onClick={handleLike}>Like</button>
+        <Button onClick={handleLike} className="m-2">
+          Like
+        </Button>
         <br />
         <span>Added by {blog.user.name}</span>
         {user && user.username === blog.user.username && (
           <>
             <br />
-            <button onClick={handleRemove}>Remove</button>
+            <Button onClick={handleRemove}>Remove</Button>
           </>
         )}
         <h3>Comments</h3>
-        <form onSubmit={handleCommentSubmit}>
-          <input
-            type="text"
-            value={comment}
-            onChange={({ target }) => setComment(target.value)}
-          />
-          <button type="submit">Add Comment</button>
-        </form>
-        <ul>
+        <Form onSubmit={handleCommentSubmit}>
+          <Row>
+            <Col>
+              <Form.Group>
+                <Form.Control
+                  type="text"
+                  value={comment}
+                  onChange={({ target }) => setComment(target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Button type="submit">Add Comment</Button>
+            </Col>
+          </Row>
+        </Form>
+        <Row>
           {blog.comments?.map((comment, index) => (
-            <li key={index}>{comment}</li>
+            <Card key={index} className="p-3 m-2">
+              {comment}
+            </Card>
           ))}
-        </ul>
+        </Row>
       </div>
     </div>
   );

@@ -9,6 +9,15 @@ import { initializeBlogs } from "./reducers/blogReducer";
 import { login, logout, setUser } from "./reducers/loginReducer";
 import { Link, Route, Routes, useMatch } from "react-router-dom";
 import { initializeUsers } from "./reducers/usersReducer";
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
+import Row from "react-bootstrap/Row";
+import UserList from "./components/UserList";
+import User from "./components/User";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -74,37 +83,37 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
-        <h2>Log in to application</h2>
+      <Container>
+        <h2 className="mt-5">Log in to application</h2>
         {msgBox()}
-        <form onSubmit={handleLogin}>
-          <div>
-            <label>
+        <Form onSubmit={handleLogin}>
+          <Form.Group>
+            <Form.Label>
               Username
-              <input
+              <Form.Control
                 type="text"
                 name="username"
                 value={username}
                 onChange={({ target }) => setUsername(target.value)}
               />
-            </label>
-          </div>
-          <div>
-            <label>
+            </Form.Label>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>
               Password
-              <input
+              <Form.Control
                 type="password"
                 name="password"
                 value={password}
                 onChange={({ target }) => setPassword(target.value)}
               />
-            </label>
-          </div>
+            </Form.Label>
+          </Form.Group>
           <div>
-            <button type="submit">Login</button>
+            <Button type="submit">Login</Button>
           </div>
-        </form>
-      </div>
+        </Form>
+      </Container>
     );
   }
 
@@ -116,81 +125,56 @@ const App = () => {
         </Togglable>
 
         <h3>Current blogs</h3>
-        {blogs
-          .toSorted((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <li key={blog.id}>
-              <a href={`/blogs/${blog.id}`}>
-                {blog.title} by {blog.author}
-              </a>
-            </li>
-          ))}
-      </>
-    );
-  };
-
-  const Users = () => {
-    return (
-      <>
-        <h2>Users</h2>
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Blogs created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>
-                  <a href={`/users/${user.id}`}>{user.name}</a>
-                </td>
-                <td>{user.blogs.length}</td>
-              </tr>
+        <Row>
+          {blogs
+            .toSorted((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Card
+                key={blog.id}
+                className="p-3 m-2"
+                style={{ maxWidth: "300px" }}
+              >
+                <a href={`/blogs/${blog.id}`}>
+                  {blog.title} by {blog.author}
+                </a>
+              </Card>
             ))}
-          </tbody>
-        </table>
+        </Row>
       </>
-    );
-  };
-
-  const User = ({ user }) => {
-    if (!user) {
-      return null;
-    }
-
-    return (
-      <div>
-        <h2>{user.name}</h2>
-        <h3>Added blogs:</h3>
-        <ul>
-          {user.blogs.map((blog) => (
-            <li key={blog.id}>{blog.title}</li>
-          ))}
-        </ul>
-      </div>
     );
   };
 
   return (
-    <div>
-      <div>
-        <Link to="/">Blogs</Link>
-        <Link to="/users">Users</Link>
-        <span>
-          {user.name} logged in{" "}
-          <button onClick={() => dispatch(logout())}>Logout</button>
-        </span>
-      </div>
+    <div className="container">
+      <Navbar>
+        <Container>
+          <Navbar.Brand>
+            <Nav.Link as={Link} to="/">
+              Blog App
+            </Nav.Link>
+          </Navbar.Brand>
+          <Nav>
+            <Nav.Link as={Link} to="/">
+              Blogs
+            </Nav.Link>
+            <Nav.Link as={Link} to="/users">
+              Users
+            </Nav.Link>
+          </Nav>
+          <span>
+            {user.name} logged in{" "}
+            <Button onClick={() => dispatch(logout())}>Logout</Button>
+          </span>
+        </Container>
+      </Navbar>
 
-      <h2>blogs</h2>
+      <h2>Blogs</h2>
       {msgBox()}
 
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/create" element={<MainPage />} />
-        <Route path="/users" element={<Users />} />
+        <Route path="/users" element={<UserList />} />
         <Route path="/users/:id" element={<User user={userById} />} />
         <Route
           path="/blogs/:id"
