@@ -1,8 +1,10 @@
 import { useDispatch } from "react-redux";
-import { removeBlog, likeBlog } from "../reducers/blogReducer";
+import { useState } from "react";
+import { removeBlog, likeBlog, commentBlog } from "../reducers/blogReducer";
 
 const Blog = ({ blog, user }) => {
   const dispatch = useDispatch();
+  const [comment, setComment] = useState("");
 
   if (!blog) {
     return null;
@@ -30,6 +32,12 @@ const Blog = ({ blog, user }) => {
     }
   };
 
+  const handleCommentSubmit = async (event) => {
+    event.preventDefault();
+    dispatch(commentBlog(blog.id, comment));
+    setComment("");
+  };
+
   return (
     <div style={{ padding: 5 }} className="blog">
       <h2>
@@ -48,6 +56,20 @@ const Blog = ({ blog, user }) => {
             <button onClick={handleRemove}>Remove</button>
           </>
         )}
+        <h3>Comments</h3>
+        <form onSubmit={handleCommentSubmit}>
+          <input
+            type="text"
+            value={comment}
+            onChange={({ target }) => setComment(target.value)}
+          />
+          <button type="submit">Add Comment</button>
+        </form>
+        <ul>
+          {blog.comments?.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );

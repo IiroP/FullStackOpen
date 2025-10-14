@@ -46,4 +46,19 @@ blogsRouter.put("/:id", userExtractor, async (request, response) => {
   response.json(updated);
 });
 
+blogsRouter.post("/:id/comments", userExtractor, async (request, response) => {
+  const user = request.user;
+  const id = request.params.id;
+  const blog = await Blog.findById(id);
+  if (!blog) {
+    return response.status(404).json({ error: "blog not found" });
+  }
+  const updated = {
+    ...blog.toObject(),
+    comments: (blog.comments || []).concat(request.body.comment),
+  };
+  const result = await Blog.findByIdAndUpdate(id, updated, { new: true });
+  response.json(result);
+});
+
 module.exports = blogsRouter;
