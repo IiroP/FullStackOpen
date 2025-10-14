@@ -1,10 +1,12 @@
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { removeBlog, likeBlog } from "../reducers/blogReducer";
 
 const Blog = ({ blog, user }) => {
-  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+
+  if (!blog) {
+    return null;
+  }
 
   const handleLike = async () => {
     try {
@@ -30,24 +32,23 @@ const Blog = ({ blog, user }) => {
 
   return (
     <div style={{ padding: 5 }} className="blog">
-      <span>{blog.title}</span> <span>{blog.author}</span>
-      <button onClick={() => setOpen(!open)}>{open ? "Hide" : "View"}</button>
-      {open && (
-        <div>
-          <span>{blog.url}</span>
-          <br />
-          <span>Likes: {blog.likes}</span>
-          <button onClick={handleLike}>Like</button>
-          <br />
-          <span>Added by {blog.user.name}</span>
-          {user && user.username === blog.user.username && (
-            <>
-              <br />
-              <button onClick={handleRemove}>Remove</button>
-            </>
-          )}
-        </div>
-      )}
+      <h2>
+        {blog.title} by {blog.author}
+      </h2>
+      <div>
+        <span>{blog.url}</span>
+        <br />
+        <span>Likes: {blog.likes}</span>
+        <button onClick={handleLike}>Like</button>
+        <br />
+        <span>Added by {blog.user.name}</span>
+        {user && user.username === blog.user.username && (
+          <>
+            <br />
+            <button onClick={handleRemove}>Remove</button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

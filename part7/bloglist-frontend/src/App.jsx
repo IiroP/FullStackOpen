@@ -21,8 +21,15 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const match = useMatch("/users/:id");
-  const userById = match ? users.find((u) => u.id === match.params.id) : null;
+  const userMatch = useMatch("/users/:id");
+  const userById = userMatch
+    ? users.find((u) => u.id === userMatch.params.id)
+    : null;
+
+  const blogMatch = useMatch("/blogs/:id");
+  const blogById = blogMatch
+    ? blogs.find((b) => b.id === blogMatch.params.id)
+    : null;
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -112,7 +119,11 @@ const App = () => {
         {blogs
           .toSorted((a, b) => b.likes - a.likes)
           .map((blog) => (
-            <Blog key={blog.id} blog={blog} user={user} />
+            <li key={blog.id}>
+              <a href={`/blogs/${blog.id}`}>
+                {blog.title} by {blog.author}
+              </a>
+            </li>
           ))}
       </>
     );
@@ -176,6 +187,10 @@ const App = () => {
         <Route path="/create" element={<MainPage />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User user={userById} />} />
+        <Route
+          path="/blogs/:id"
+          element={<Blog blog={blogById} user={user} />}
+        />
       </Routes>
     </div>
   );
