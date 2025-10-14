@@ -7,7 +7,7 @@ import Togglable from "./components/Togglable";
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs } from "./reducers/blogReducer";
 import { login, logout, setUser } from "./reducers/loginReducer";
-import { Route, Routes, useMatch } from "react-router-dom";
+import { Link, Route, Routes, useMatch } from "react-router-dom";
 import { initializeUsers } from "./reducers/usersReducer";
 
 const App = () => {
@@ -175,12 +175,17 @@ const App = () => {
 
   return (
     <div>
+      <div>
+        <Link to="/">Blogs</Link>
+        <Link to="/users">Users</Link>
+        <span>
+          {user.name} logged in{" "}
+          <button onClick={() => dispatch(logout())}>Logout</button>
+        </span>
+      </div>
+
       <h2>blogs</h2>
       {msgBox()}
-      <p>
-        {user.name} logged in{" "}
-        <button onClick={() => dispatch(logout())}>Logout</button>
-      </p>
 
       <Routes>
         <Route path="/" element={<MainPage />} />
