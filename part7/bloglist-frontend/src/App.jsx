@@ -3,41 +3,32 @@ import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
-import login from "./services/login";
 import Togglable from "./components/Togglable";
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs } from "./reducers/blogReducer";
+import { login, logout, setUser } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
   const message = useSelector((state) => state.notification);
+  const user = useSelector((state) => state.user);
 
   const blogFormRef = useRef();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
     try {
-      const user = await login.login({ username, password });
-      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
+      await dispatch(login({ username, password }));
       setUsername("");
       setPassword("");
     } catch (exception) {
       console.error(exception);
       showMessage("error", "Login failed, check username and password");
     }
-  };
-
-  const logout = () => {
-    window.localStorage.removeItem("loggedInUser");
-    blogService.setToken(null);
-    setUser(null);
   };
 
   const updateBlogs = async () => {
@@ -53,7 +44,7 @@ const App = () => {
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON);
       blogService.setToken(user.token);
-      setUser(user);
+      dispatch(setUser(user));
     }
   }, []);
 
@@ -108,7 +99,8 @@ const App = () => {
       <h2>blogs</h2>
       {msgBox()}
       <p>
-        {user.name} logged in <button onClick={logout}>Logout</button>
+        {user.name} logged in{" "}
+        <button onClick={() => dispatch(logout())}>Logout</button>
       </p>
 
       <Togglable buttonLabel="New blog" ref={blogFormRef}>
